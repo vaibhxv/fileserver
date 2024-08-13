@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Storage Server</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Registration Form -->
+        <div class="form-container" id="register-form">
+            <h2>Register</h2>
+            <form id="register">
+                <input type="text" id="register-username" placeholder="Username" required>
+                <input type="password" id="register-password" placeholder="Password" required>
+                <button type="submit">Register</button>
+            </form>
+            <p id="register-message"></p>
+            <p>Already have an account? <a href="#" id="show-login">Login</a></p>
+        </div>
+
+        <!-- Login Form -->
+        <div class="form-container" id="login-form">
+            <h2>Login</h2>
+            <form id="login">
+                <input type="text" id="login-username" placeholder="Username" required>
+                <input type="password" id="login-password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p id="login-message"></p>
+            <p>Don't have an account? <a href="#" id="show-register">Register</a></p>
+        </div>
+
+        <!-- File Upload Button and Form -->
+        <div id="upload-section" style="display:none;">
+            <button id="open-upload-form">Upload File</button>
+            <div id="upload-form" style="display:none;">
+                <h2>Upload File</h2>
+                <form id="upload" enctype="multipart/form-data">
+                    <input type="file" id="file" name="file" required>
+                    <button type="submit">Upload</button>
+                </form>
+                <p id="upload-message"></p>
+            </div>
+        </div>
+
+        <!-- File List -->
+        <div id="file-list" style="display:none;">
+            <h2>Files</h2>
+            <ul id="files"></ul>
+            
+        </div>
+        
+       <!-- File Preview Modal -->
+<div id="file-preview-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+        
+        <span id="close-modal" class="close">&times;</span>
+        <h2>File Preview</h2>
+        <div id="file-preview"></div>
+    </div>
+</div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
