@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const filePreview = document.getElementById('file-preview');
     const closeModal = document.getElementById('close-modal');
 
-    
+    //yo
 
     // Toggle between login and register forms
     showLogin.addEventListener('click', () => {
