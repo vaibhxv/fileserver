@@ -33,17 +33,24 @@
         </div>
 
         <!-- File Upload Button and Form -->
-        <div id="upload-section" style="display:none;">
-            <button id="open-upload-form">Upload File</button>
-            <div id="upload-form" style="display:none;">
-                <h2>Upload File</h2>
-                <form id="upload" enctype="multipart/form-data">
-                    <input type="file" id="file" name="file" required>
-                    <button type="submit">Upload</button>
-                </form>
-                <p id="upload-message"></p>
-            </div>
-        </div>
+      <!-- File Upload Button and Form -->
+<div id="upload-section" style="display:none;">
+    <button id="open-upload-form">Upload File</button>
+    <button id="logout-button">Logout</button>
+    <div id="upload-form" style="display:none;">
+        <h2>Upload File</h2>
+        <form id="upload" enctype="multipart/form-data">
+            <input type="file" id="file" name="file" required>
+            <button type="submit">Upload</button>
+        </form>
+        <p id="upload-message"></p>
+    </div>
+</div>
+
+        <!-- Progress Bar for Upload -->
+<div id="progress-container" class="progress-container" style="display:none;">
+    <div id="progress-bar" class="progress-bar"></div>
+</div>
 
         <!-- File List -->
         <div id="file-list" style="display:none;">
@@ -52,15 +59,18 @@
             
         </div>
         
-       <!-- File Preview Modal -->
+       
+     <!-- File Preview Modal -->
 <div id="file-preview-modal" class="modal" style="display:none;">
     <div class="modal-content">
-        
         <span id="close-modal" class="close">&times;</span>
         <h2>File Preview</h2>
         <div id="file-preview"></div>
+        <div id="file-spinner-container" class="spinner-container" style="display:none;">
+            <div class="file-spinner"></div>
+        </div>
     </div>
-</div>
+    </div>
     </div>
     <script src="script.js"></script>
 </body>

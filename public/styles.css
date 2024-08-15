@@ -71,17 +71,19 @@ button:hover {
     text-align: center;
 }
 
-/* Loading Spinner */
-.loading-spinner {
+/* Spinner */
+.spinner-container {
+    text-align: center;
+}
+
+.file-spinner {
     border: 8px solid #f3f3f3; /* Light grey */
     border-top: 8px solid #3498db; /* Blue */
     border-radius: 50%;
     width: 50px;
     height: 50px;
     animation: spin 1s linear infinite;
-    margin: auto;
-    text-align: center;
-    display: block !important;
+    display: inline-block;
 }
 
 @keyframes spin {
@@ -89,3 +91,15 @@ button:hover {
     100% { transform: rotate(360deg); }
 }
 
+/* Progress Bar */
+.progress-container {
+    margin: 10px 0;
+    width: 100%;
+}
+
+.progress-bar {
+    width: 0;
+    height: 5px;
+    background-color: #007bff;
+    transition: width 0.4s ease;
+}

@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const filesUl = document.getElementById('files');
     const uploadSection = document.getElementById('upload-section');
     const openUploadFormButton = document.getElementById('open-upload-form');
+    const logoutButton = document.getElementById('logout-button');
     const registerMessage = document.getElementById('register-message');
     const loginMessage = document.getElementById('login-message');
     const uploadMessage = document.getElementById('upload-message');
@@ -19,7 +20,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const filePreview = document.getElementById('file-preview');
     const closeModal = document.getElementById('close-modal');
 
-    //yo
+    // Show only login form initially
+    registerFormContainer.style.display = 'none';
+    loginFormContainer.style.display = 'block';
+    uploadSection.style.display = 'none';
+    fileList.style.display = 'none';
 
     // Toggle between login and register forms
     showLogin.addEventListener('click', () => {
@@ -80,34 +85,62 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Logout user
+    logoutButton.addEventListener('click', () => {
+        localStorage.removeItem('token');
+        loginFormContainer.style.display = 'block';
+        uploadSection.style.display = 'none';
+        fileList.style.display = 'none';
+        loginMessage.textContent = 'You have been logged out.';
+    });
+
     // Open/close upload form
     openUploadFormButton.addEventListener('click', () => {
         uploadForm.style.display = uploadForm.style.display === 'none' ? 'block' : 'none';
     });
 
-    // Upload file
-    uploadForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const fileInput = document.getElementById('file');
-        const formData = new FormData();
-        formData.append('file', fileInput.files[0]);
+   // Upload file with progress bar
+uploadForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const fileInput = document.getElementById('file');
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
 
-        try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`${baseUrl}/upload`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` },
-                body: formData
-            });
-            const result = await response.json();
+    const progressBar = document.getElementById('progress-bar');
+    const progressContainer = document.getElementById('progress-container');
+
+    progressContainer.style.display = 'block';
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `${baseUrl}/upload`, true);
+    xhr.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
+
+    xhr.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable) {
+            const percent = Math.min(100, (event.loaded / event.total) * 100);
+            progressBar.style.width = `${percent}%`;
+        }
+    });
+
+    xhr.addEventListener('load', async () => {
+        progressContainer.style.display = 'none';
+        if (xhr.status >= 200 && xhr.status < 300) {
+            const result = JSON.parse(xhr.responseText);
             uploadMessage.textContent = result.message || result.error;
-            if (response.ok) {
-                await loadFiles();
-            }
-        } catch (error) {
+            await loadFiles();
+        } else {
             uploadMessage.textContent = 'Error uploading file.';
         }
     });
+
+    xhr.addEventListener('error', () => {
+        progressContainer.style.display = 'none';
+        uploadMessage.textContent = 'Error uploading file.';
+    });
+
+    xhr.send(formData);
+});
+
 
     // Load files
     async function loadFiles() {
@@ -134,38 +167,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Preview file
-    filesUl.addEventListener('click', async (event) => {
-        if (event.target.tagName === 'A') {
-            event.preventDefault();
-            const fileName = event.target.dataset.file;
+   // File preview and spinner
+   filesUl.addEventListener('click', async (event) => {
+    if (event.target.tagName === 'A') {
+        event.preventDefault();
+        const fileName = event.target.dataset.file;
 
-            try {
-                const token = localStorage.getItem('token');
-                const response = await fetch(`${baseUrl}/view-video?file=${encodeURIComponent(fileName)}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const contentType = response.headers.get('Content-Type');
+        // Show spinner
+        document.getElementById('file-spinner-container').style.display = 'block';
+        filePreview.innerHTML = '';
 
-                if (response.ok) {
-                    let fileContent;
-                    if (contentType.startsWith('video/')) {
-                        fileContent = `<video controls src="${URL.createObjectURL(await response.blob())}" style="width: 100%; height: auto;"></video>`;
-                    } else {
-                        fileContent = 'File type not supported for preview.';
-                    }
-                    filePreview.innerHTML = fileContent;
-                    filePreviewModal.style.display = 'block';
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${baseUrl}/view-video?file=${encodeURIComponent(fileName)}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const contentType = response.headers.get('Content-Type');
+
+            if (response.ok) {
+                let fileContent;
+                if (contentType.startsWith('video/')) {
+                    fileContent = `<video controls src="${URL.createObjectURL(await response.blob())}" style="width: 100%; height: auto;"></video>`;
                 } else {
-                    filePreview.innerHTML = 'Error loading file.';
-                    filePreviewModal.style.display = 'block';
+                    fileContent = 'File type not supported for preview.';
                 }
-            } catch (error) {
+                filePreview.innerHTML = fileContent;
+            } else {
                 filePreview.innerHTML = 'Error loading file.';
-                filePreviewModal.style.display = 'block';
             }
+        } catch (error) {
+            filePreview.innerHTML = 'Error loading file.';
+        } finally {
+            // Hide spinner
+            document.getElementById('file-spinner-container').style.display = 'none';
+            filePreviewModal.style.display = 'block';
         }
-    });
+    }
+});
 
     // Close modal
     closeModal.addEventListener('click', () => {
